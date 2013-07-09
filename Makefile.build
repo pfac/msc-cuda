@@ -1,0 +1,36 @@
+#
+# Modelines
+# sublime: x_syntax Packages/Makefile/Makefile.tmLanguage
+#
+
+CMAKE_BUILD_TYPES = None Debug Release RelWithDebInfo MinSizeRel
+
+DIRS = $(shell echo "$(CMAKE_BUILD_TYPES)" | tr '[A-Z]' '[a-z]')
+
+.PHONY: default $(CMAKE_BUILD_TYPES) clean purge
+
+default: None
+
+$(DIRS):
+		@echo "    (MKDIR) $@"
+		@mkdir -p $@
+
+clean:
+		@echo "    (CLEANING)"
+		@for btype in $(CMAKE_BUILD_TYPES); do if [ -d "$$btype" ]; then cd "$$btype"; $_ clean; fi; done
+
+purge:
+		@echo "    (PURGING)"
+		@for btype in $(CMAKE_BUILD_TYPES); do $(RM) -r "$$btype"; done
+
+define build-type-rule
+
+dir = $$(shell echo $1 | tr '[A-Z]' '[a-z]')
+
+$1: $$(dir)
+		@echo "    -> $$< (CMAKE)"
+		@cd $$<; cmake -DCMAKE_BUILD_TYPE=$$@ ../..; $$_
+
+endef
+
+$(foreach btype,$(CMAKE_BUILD_TYPES),$(eval $(call build-type-rule,$(btype))))
