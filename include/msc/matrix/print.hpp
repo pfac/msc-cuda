@@ -50,7 +50,7 @@ void print (const T * const m, const ulong rows, const ulong cols, ostream& out 
 	Mat<T> arma_m(rows, cols);
 
 	array2arma(m, rows, cols, arma_m);
-	print_m(arma_m, out, max_rows, max_cols);
+	print(arma_m, out, max_rows, max_cols);
 }
 
 

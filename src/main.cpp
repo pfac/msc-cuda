@@ -30,8 +30,14 @@ int _main () {
 
 	const ulong m = arma_matrix.n_rows;
 
+	T * const t = new T[m * m];
+
+	arma2array(arma_matrix, t);
+
 	if (print_sqrtm)
-		print(arma_matrix);
+		print(t, m, m);
+
+	delete[] t;
 
 	return 0;
 }
