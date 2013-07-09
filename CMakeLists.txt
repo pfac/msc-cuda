@@ -6,7 +6,9 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 include_directories(include)
 
 # dependencies
-find_package(Armadillo REQUIRED)
+find_package(Boost 1.34.0 REQUIRED COMPONENTS program_options)
+include_directories(${Boost_INCLUDE_DIRS})
+link_directories(${Boost_LIBRARY_DIRS})
 
 if (UNIX AND NOT APPLE)
 	find_library(RT_LIBRARY rt)
