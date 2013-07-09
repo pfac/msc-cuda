@@ -12,6 +12,9 @@ link_directories(${Boost_LIBRARY_DIRS})
 
 find_package(CUDA REQUIRED)
 include_directories(${CUDA_INCLUDE_DIRS})
+
+find_package(Armadillo REQUIRED)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
 # dependencies (end)
 
 if (UNIX AND NOT APPLE)
