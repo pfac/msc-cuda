@@ -3,20 +3,16 @@
 // project headers
 #include "main_options.h"
 #include <msc/cuda/core>
-#include <msc/matrix/print>
+#include <msc/matrix.hpp>
 #include <msc/core/gpu/point>
 
 // stc C++ headers
 #include <iostream>
 
-// Armadillo headers
-#include <armadillo>
-
 
 // names
 using std::clog;
-
-using arma::Mat;
+using std::cout;
 
 
 // macros
@@ -25,22 +21,12 @@ using arma::Mat;
 
 template<typename T>
 int _main () {
-	Mat<T> arma_matrix;
-	if (!arma_matrix.load(filename))
-		return 1;
+	matrix<T> t(filename);
 
-	const ulong m = arma_matrix.n_rows;
-
-	T * const t = new T[m * m];
-
-	arma2array(arma_matrix, t);
-
-	sqrtm(t, m);
+	// sqrtm(t, m);
 
 	if (print_sqrtm)
-		print(t, m, m);
-
-	delete[] t;
+		cout << t << endl; 
 
 	return 0;
 }

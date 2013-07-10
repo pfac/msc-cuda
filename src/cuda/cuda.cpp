@@ -1,6 +1,6 @@
 // project headers
-#include <msc/cuda>
-#include <msc/cuda_bits/exceptions/no_device>
+#include <msc/cuda/core>
+#include <msc/cuda/exceptions/no_device>
 
 // CUDA headers
 #include <cuda_runtime.h>

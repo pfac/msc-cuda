@@ -3,7 +3,7 @@
 
 
 // project headers
-#include <msc/matrix/arma>
+#include <msc/matrix.hpp>
 
 // std C++ headers
 #include <algorithm>
