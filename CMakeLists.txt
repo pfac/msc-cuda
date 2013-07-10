@@ -34,6 +34,6 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 # add_custom_target(tests)
 # add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-add_subdirectory(tests)
+add_subdirectory(tests EXCLUDE_FROM_ALL)
 
 # tests (end)

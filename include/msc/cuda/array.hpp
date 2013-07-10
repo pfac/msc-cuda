@@ -5,10 +5,6 @@
 #include <msc/cuda/error>
 
 
-// macros
-#define HANDLE_ERROR(e) handle_error(e, __FILE__, __LINE__)
-
-
 namespace CUDA {
 
 
@@ -21,13 +17,26 @@ namespace CUDA {
 		array (const T * const host_data, const ulong count) {
 			data_size = sizeof(T) * count;
 			HANDLE_ERROR( cudaMalloc(&device_data, data_size) );
-			HANDLE_ERROR( cudaMemcpy(device_data, host_data, data_size, cudaMemcpyDeviceToHost) );
+			HANDLE_ERROR( cudaMemcpy(device_data, host_data, data_size, cudaMemcpyHostToDevice) );
 		}
 
 		~array () {
-			HANDLE_ERROR( cudaFree(device_data) );
+			if (device_data)
+				HANDLE_ERROR( cudaFree(device_data) );
 		}
 
+
+		//
+		// memory
+		//
+		void to_host (T * const host_data) const {
+			HANDLE_ERROR( cudaMemcpy(host_data, device_data, data_size, cudaMemcpyDeviceToHost) );
+		}
+
+
+		//
+		// getters
+		//
 		T * get_pointer() const { return device_data; }
 	};
 

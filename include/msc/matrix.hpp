@@ -7,10 +7,15 @@
 
 
 // names
+using std::ios_base;
 using std::istream;
 using std::ifstream;
 using std::ostream;
 using std::stringstream;
+
+
+// types
+typedef unsigned long ulong;
 
 
 // macros
@@ -23,13 +28,37 @@ class matrix {
 	ulong c;
 	T * content;
 
+	//
+	// setters
+	//
+	void rows(const ulong r) { this->r = r; }
+	void cols(const ulong c) { this->c = c; }
+
+	//
+	// utilities (read-only)
+	//
 	ulong linidx (const ulong i, const ulong j) const { return i * c + j; }
+
+
+	void resize () {
+		T * const content = new T[r * c];
+		if (this->content) {
+			memcpy(content, this->content, r * c * sizeof(T));
+			delete[] this->content;
+		}
+		this->content = content;
+	}
+
+
 public:
-	matrix (const string& filename) {
+	matrix (const string& filename) : r(0), c(0), content(NULL) {
 		ifstream file;
 		file.open(filename.c_str());
 		file >> *this;
+		file.close();
 	}
+
+	matrix (const ulong r, const ulong c) : r(r), c(c), content(NULL) { this->resize(); }
 
 
 	//
@@ -37,13 +66,7 @@ public:
 	//
 	ulong rows() const { return r; }
 	ulong cols() const { return c; }
-
-
-	//
-	// setters
-	//
-	void rows(const ulong r) { this->r = r; }
-	void cols(const ulong c) { this->c = c; }
+	T * data_ptr() { return content; }
 
 
 	//
@@ -53,15 +76,9 @@ public:
 		if (r == rows() && c == cols())
 			return;
 
-		T * const content = new T[r * c];
-		if (content) {
-			memcpy(content, this->content, r * c * sizeof(T));
-			delete[] this->content;
-		}
-
 		rows(r);
 		cols(c);
-		this->content = content;
+		resize();
 	}
 
 
@@ -110,6 +127,9 @@ public:
 
 	friend
 	ostream& operator<< (ostream& out, const matrix<T>& m) {
+		ios_base::fmtflags state = out.flags();
+
+		out << m.r << ' ' << m.c << endl;
 		for (ulong i = 0; i < m.r; ++i) {
 			for (ulong j = 0; j < m.c; ++j) {
 				out.put(' ');
@@ -118,9 +138,13 @@ public:
 			out.put(endl);
 		}
 
+		out.flags(state);
 		return out;
 	}
 };
+
+
+#undef endl
 
 
 #endif//___MSC__MATRIX_HPP___

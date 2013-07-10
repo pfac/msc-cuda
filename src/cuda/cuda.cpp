@@ -1,5 +1,6 @@
 // project headers
 #include <msc/cuda/core>
+#include <msc/cuda/error>
 #include <msc/cuda/exceptions/no_device>
 
 // CUDA headers
@@ -10,7 +11,6 @@
 
 
 // macros
-#define HANDLE_ERROR(e) handle_error(e, __FILE__, __LINE__)
 #define endl '\n'
 
 
@@ -19,16 +19,6 @@ namespace CUDA {
 
 	bool queried = false;
 	vector<device> devices;
-
-
-
-	inline
-	void handle_error (cudaError_t error, const char * file, const ulong line) throw(int) {
-		if (error != cudaSuccess) {
-			std::cerr << cudaGetErrorString(error) << endl;
-			throw error;
-		}
-	}
 
 
 

@@ -23,7 +23,7 @@ template<typename T>
 int _main () {
 	matrix<T> t(filename);
 
-	// sqrtm(t, m);
+	sqrtm(t.data_ptr(), t.rows());
 
 	if (print_sqrtm)
 		cout << t << endl; 
@@ -34,6 +34,7 @@ int _main () {
 
 int main (int argc, char * argv[]) {
 	parse_arguments(argc, argv);
+	int retval;
 
 	#ifndef NDEBUG
 	clog << "Options parsed:" << endl
@@ -41,9 +42,18 @@ int main (int argc, char * argv[]) {
 	     ;
 	#endif
 
+	cudaPrintfInit();
+
 	CUDA::query_devices(true);
 	if (CUDA::get_device(0).supports_double_precision())
-		return _main<double>();
+		retval = _main<double>();
 	else
-		return _main<float>();
+		retval = _main<float>();
+
+	cudaDeviceSynchronize();
+	cudaPrintfDisplay(stdout, true);
+	cudaPrintfEnd();
+	cudaDeviceReset();
+
+	return retval;
 }
