@@ -2,8 +2,9 @@
 
 // project headers
 #include "main_options.h"
-#include <msc/cuda>
+#include <msc/cuda/core>
 #include <msc/matrix/print>
+#include <msc/core/gpu/point>
 
 // stc C++ headers
 #include <iostream>
@@ -33,6 +34,8 @@ int _main () {
 	T * const t = new T[m * m];
 
 	arma2array(arma_matrix, t);
+
+	sqrtm(t, m);
 
 	if (print_sqrtm)
 		print(t, m, m);

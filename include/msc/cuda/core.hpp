@@ -2,7 +2,7 @@
 #define ___MSC__CUDA_HPP___
 
 // project headers
-#include <msc/cuda_bits/device>
+#include <msc/cuda/device>
 
 // std C++ headers
 #include <vector>

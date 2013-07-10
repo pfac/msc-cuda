@@ -1,2 +1,2 @@
-add_executable(cuda main main_options cuda/cuda)
+CUDA_ADD_EXECUTABLE(cuda main.cu main_options cuda/cuda)
 target_link_libraries(cuda ${Boost_LIBRARIES} ${CUDA_LIBRARIES})
