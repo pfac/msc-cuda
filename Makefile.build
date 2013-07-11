@@ -23,6 +23,8 @@ purge:
 		@echo "    (PURGING)"
 		@for btype in $(CMAKE_BUILD_TYPES); do $(RM) -r "$$btype"; done
 
+
+
 define build-type-rule
 
 dir = $$(shell echo $1 | tr '[A-Z]' '[a-z]')
@@ -30,6 +32,10 @@ dir = $$(shell echo $1 | tr '[A-Z]' '[a-z]')
 $1: $$(dir)
 		@echo "    -> $$< (CMAKE)"
 		@cd $$<; cmake -DCMAKE_BUILD_TYPE=$$@ ../..; $$_
+
+test-$1: $$(dir) $1
+	@echo "    -> $$< ($$@)"
+	@cd $$<; $$_ test
 
 endef
 

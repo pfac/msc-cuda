@@ -15,12 +15,25 @@ include_directories(${CUDA_INCLUDE_DIRS})
 
 find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
-# dependencies (end)
 
 if (UNIX AND NOT APPLE)
 	find_library(RT_LIBRARY rt)
 endif ()
+# dependencies (end)
 
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 add_subdirectory(src)
+
+# tests (begin)
+enable_testing()
+
+# gtest
+add_subdirectory(vendor/gtest-1.6.0 EXCLUDE_FROM_ALL)
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+add_custom_target(tests)
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+add_subdirectory(tests)
+
+# tests (end)
