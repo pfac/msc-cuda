@@ -32,8 +32,8 @@ enable_testing()
 add_subdirectory(vendor/gtest-1.6.0 EXCLUDE_FROM_ALL)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-add_custom_target(tests)
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+# add_custom_target(tests)
+# add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 add_subdirectory(tests)
 
 # tests (end)
