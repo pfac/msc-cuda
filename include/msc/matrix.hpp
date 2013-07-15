@@ -37,7 +37,7 @@ class matrix {
 	//
 	// utilities (read-only)
 	//
-	ulong linidx (const ulong i, const ulong j) const { return i * c + j; }
+	ulong linidx (const ulong i, const ulong j) const { return j * r + i; }
 
 
 	void resize () {
