@@ -4,7 +4,9 @@
 #include "main_options.h"
 #include <msc/cuda/core>
 #include <msc/matrix.hpp>
-#include <msc/core/gpu/point>
+#include <msc/core/gpu/block>
+
+#include "../vendor/nvidia/cuda/cuPrintf.cu"
 
 // stc C++ headers
 #include <iostream>
@@ -23,7 +25,7 @@ template<typename T>
 int _main () {
 	matrix<T> t(filename);
 
-	sqrtm(t.data_ptr(), t.rows());
+	sqrtm(t.data_ptr(), t.rows(), block_size);
 
 	if (print_sqrtm)
 		cout << t << endl; 
