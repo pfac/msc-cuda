@@ -7,6 +7,12 @@
 #include "../../../../vendor/nvidia/cuda/cuPrintf.cu"
 
 
+// macros
+#ifndef THREADS_PER_BLOCK
+#define THREADS_PER_BLOCK 32
+#endif//THREADS_PER_BLOCK
+
+
 
 // namespace point {
 
@@ -43,7 +49,7 @@
 
 	template<typename T>
 	__global__
-	void __solve_dependencies (const ulong dd, T * const t, const ulong tDim) {
+	void __solve_dependencies_coarse (const ulong dd, T * const t, const ulong tDim) {
 		const ulong diagcount = tDim - dd;
 		for (ulong elem = blockIdx.x * blockDim.x + threadIdx.x; elem < diagcount; elem += blockDim.x * gridDim.x) {
 			const ulong ii = elem;
@@ -61,6 +67,49 @@
 				t[idx] -= rr * cc;
 			}
 		}
+	}
+
+
+
+	template<typename T, unsigned B>
+	__global__
+	void __solve_dependencies_fine (const ulong dd, T * const t, const ulong tDim) {
+		__shared__ T cache[B];
+
+		const ulong tid = threadIdx.x;
+
+		const ulong elem = blockIdx.x;
+		const ulong ii = elem;
+		const ulong jj = elem + dd;
+		const ulong idx = jj * tDim + ii;
+
+		// cuPrintf("Block %d is handling (%d,%d)\n", elem, ii, jj);
+
+		T sum = 0;
+		const ulong kk_limits[2] = { ii + 1, jj - 1 };
+		for (ulong kk = kk_limits[0] + tid; kk <= kk_limits[1]; kk += B) {
+			const ulong ccIdx = jj * tDim + kk;
+			const ulong rrIdx = kk * tDim + ii;
+
+			const T cc = t[ccIdx];
+			const T rr = t[rrIdx];
+
+			sum += rr * cc;
+			// cuPrintf("(%d,%d) sum: %lf\n", ii, jj, sum);
+		}
+
+		cache[tid] = sum;
+
+		__syncthreads();
+
+		// le reduction
+		for (ulong step = (B + 1) / 2; step > 0 && tid < step; step >>=1) {
+			cache[tid] += cache[tid + step];
+			__syncthreads();
+		}
+
+		if (tid == 0)
+			t[idx] -= cache[0];
 	}
 
 
@@ -86,9 +135,10 @@
 
 	template<typename T>
 	__host__
-	void _sqrtm_d (const ulong dd, T * const t, const ulong m, const ulong blocks, const ulong threads_per_block) {
-		__solve_dependencies<<< blocks, threads_per_block >>>(dd, t, m);
-		__sqrtm_d<<< blocks, threads_per_block >>>(dd, t, m);
+	void _sqrtm_d (const ulong dd, T * const t, const ulong tDim, const ulong blocks, const ulong threads_per_block) {
+		// __solve_dependencies_coarse<<< blocks, threads_per_block >>>(dd, t, m);
+		__solve_dependencies_fine<T,32><<< tDim - dd, threads_per_block >>>(dd, t, tDim);
+		__sqrtm_d<<< blocks, threads_per_block >>>(dd, t, tDim);
 	}
 
 
