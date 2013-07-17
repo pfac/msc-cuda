@@ -24,6 +24,14 @@ typedef unsigned long ulong;
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 
 
+/** Solve the main diagonal of a matrix.
+ *  This function uses the threads uses only the threads of a particular
+ * block to solve the main diagonal of a given matrix. Meant solve a
+ * particular block using the point method.
+ *
+ * \param mat The matrix to solve. This function changes the values in this matrix to those of the solution.
+ * \param matDim The dimension of mat, which is assumed to be squared and contiguous in memory.
+ */
 template<typename T>
 __device__
 void ____sqrtm_d0 (T * const mat, const ulong matDim) {
@@ -39,6 +47,14 @@ void ____sqrtm_d0 (T * const mat, const ulong matDim) {
 }
 
 
+/** Solve the first super-diagonal of a matrix.
+ *  This function uses the threads uses only the threads of a particular
+ * block to solve the first super-diagonal of a given matrix. Meant solve
+ * a particular block using the point method.
+ *
+ * \param mat The matrix to solve. This function changes the values in this matrix to those of the solution.
+ * \param matDim The dimension of mat, which is assumed to be squared and contiguous in memory.
+ */
 template<typename T>
 __device__
 void ____sqrtm_d1 (T * const mat, const ulong matDim) {
@@ -57,6 +73,23 @@ void ____sqrtm_d1 (T * const mat, const ulong matDim) {
 }
 
 
+/** Solve the dependencies of the n-th super-diagonal of a matrix, where
+ * n > 1.
+ *  This function uses the threads uses only the threads of a particular
+ * block to solve the dependencies of the n-th super-diagonal of a given
+ * matrix. Meant solve a particular block using the point method.
+ *
+ * \param superDiagIdx The index of the super-diagonal. The main diagonal
+ *                     has index 0, the first super-diagonal has index 1,
+ *                     and so on. NOTE: n=0 and n=1 should not be solved
+ *                     using this function.
+ *
+ * \param mat The matrix to solve. This function changes the values in
+ *            this matrix to those of the solution.
+ *
+ * \param matDim The dimension of mat, which is assumed to be squared
+ *               and contiguous in memory.
+ */
 template<typename T>
 __device__
 void _____solve_dependencies (const ulong superDiagIdx, T * const mat, const ulong matDim) {
@@ -76,6 +109,25 @@ void _____solve_dependencies (const ulong superDiagIdx, T * const mat, const ulo
 }
 
 
+/** Solve the n-th super-diagonal of a matrix, where n > 1.
+ *  This function uses the threads uses only the threads of a particular
+ * block to solve the n-th super-diagonal of a given matrix. Meant solve
+ * a particular block using the point method.
+ *  Each element of the n-th diagonal is assumed to contain the proper
+ * value after solving it's dependencies. See _____solve_dependencies for
+ * further details.
+ *
+ * \param superDiagIdx The index of the super-diagonal. The main diagonal
+ *                     has index 0, the first super-diagonal has index 1,
+ *                     and so on. NOTE: n=0 and n=1 should not be solved
+ *                     using this function.
+ *
+ * \param mat The matrix to solve. This function changes the values in
+ *            this matrix to those of the solution.
+ *
+ * \param matDim The dimension of mat, which is assumed to be squared
+ *               and contiguous in memory.
+ */
 template<typename T>
 __device__
 void _____sqrtm_d (const ulong superDiagIdx, T * const mat, const ulong matDim) {
@@ -94,6 +146,25 @@ void _____sqrtm_d (const ulong superDiagIdx, T * const mat, const ulong matDim) 
 }
 
 
+/** Solve the n-th super-diagonal of a matrix, where n > 1.
+ *  This function uses the threads uses only the threads of a particular
+ * block to solve the n-th super-diagonal of a given matrix. Meant solve
+ * a particular block using the point method.
+ *  Each element of the n-th diagonal is assumed to contain the proper
+ * value after solving it's dependencies. See _____solve_dependencies for
+ * further details.
+ *
+ * \param superDiagIdx The index of the super-diagonal. The main diagonal
+ *                     has index 0, the first super-diagonal has index 1,
+ *                     and so on. NOTE: n=0 and n=1 should not be solved
+ *                     using this function.
+ *
+ * \param mat The matrix to solve. This function changes the values in
+ *            this matrix to those of the solution.
+ *
+ * \param matDim The dimension of mat, which is assumed to be squared
+ *               and contiguous in memory.
+ */
 template<typename T>
 __device__
 void ____sqrtm_d (const ulong superDiagIdx, T * const mat, const ulong matDim) {
