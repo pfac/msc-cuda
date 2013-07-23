@@ -37,8 +37,20 @@ test-$1: $1
 	@echo "  Testing $$< ($$@)"
 	@cd $$(BUILD_DIR); $$_ $$@
 
+tests-$1: $1
+	@echo "  Building tests in $$<"
+	@cd $$(BUILD_DIR); $$_ $$@
+
+check-$1: $1
+	@echo "  Building + Testing $$<"
+	@cd $$(BUILD_DIR); $$_ $$@
+
 endef
 
 $(foreach btype,$(CMAKE_BUILD_TYPES),$(eval $(call test-build-type-rule,$(btype))))
 
 test: test-None
+
+tests: tests-None
+
+check: check-None

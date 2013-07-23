@@ -37,6 +37,14 @@ test-$1: $$(dir) $1
 	@echo "    -> $$< ($$@)"
 	@cd $$<; $$_ test
 
+tests-$1: $$(dir) $1
+	@echo "    -> $$< ($$@)"
+	@cd $$<; $$_ tests
+
+check-$1: $$(dir) $1
+	@echo "    -> $$< ($$@)"
+	@cd $$<; $$_ check
+
 endef
 
 $(foreach btype,$(CMAKE_BUILD_TYPES),$(eval $(call build-type-rule,$(btype))))
