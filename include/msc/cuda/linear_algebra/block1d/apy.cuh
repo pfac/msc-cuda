@@ -5,6 +5,7 @@
 namespace CUDA { namespace linear_algebra { namespace block1D {
 
 
+	/* y = aIy */
 	template<typename T>
 	__device__
 	void apy (const ulong n, const T alpha, T * const y, const ulong ldy) {

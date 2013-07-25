@@ -5,14 +5,14 @@
 namespace CUDA { namespace linear_algebra { namespace block1D {
 
 
-	/* Ax = b */
+	/* (A - aI)x = b */
 	template<typename T>
 	__device__
-	void trsv (const ulong n, const T * const a, T * const x) {
+	void trpaisv (const ulong n, const T * const a, const T alpha, T * const x) {
 		for (ulong col = n; col; --col) {
 			const ulong colIdx = col - 1;
 			if (threadIdx.x == 0)
-				x[colIdx] /= a[colIdx * n + colIdx];
+				x[colIdx] /= (a[colIdx * n + colIdx] - alpha);
 
 			for (ulong rowIdx = threadIdx.x; rowIdx < colIdx; rowIdx += blockDim.x) {
 				const ulong idx = colIdx * n + rowIdx;
