@@ -27,5 +27,6 @@ add_gtest (gtest.working gtest_working)
 
 add_subdirectory(nvidia)
 add_subdirectory(linear_algebra)
+add_subdirectory(cuda)
 add_subdirectory(core)
 

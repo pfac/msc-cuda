@@ -4,9 +4,6 @@
 #include <msc/cuda/array>
 #include <msc/cuda/linear_algebra/block1d/gemv>
 
-// CUDA headers
-#include "../../../../vendor/nvidia/cuda/cuPrintf.cu"
-
 
 // types
 typedef unsigned long ulong;
@@ -40,8 +37,6 @@ TEST(SmallFloatTestCase, GemvTest) {
 	CUDA::array<float> d_a(a, SMALL_DIMM);
 	CUDA::array<float> d_x(x, SMALL_DIMV);
 	CUDA::array<float> d_y(y, SMALL_DIMV);
-
-	cudaPrintfInit();
 
 	test_gemv<<< 1 , SMALL_DIMV >>>(SMALL_DIMV, SMALL_DIMV, d_a.get_pointer(), d_x.get_pointer(), d_y.get_pointer());
 	HANDLE_LAST_ERROR();
