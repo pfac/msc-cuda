@@ -9,13 +9,13 @@ typedef unsigned long ulong;
 namespace CUDA { namespace linear_algebra { namespace block1D {
 
 
-	/* y = Ax + y */
+	/* y = alpha * A * x + y */
 	template<typename T>
 	__device__
-	void gemv (const ulong m, const ulong n, const T * const a, const T * const x, T * const y) {
+	void gemv (const ulong m, const ulong n, const T alpha, const T * const a, const T * const x, T * const y) {
 		for (ulong colIdx = 0; colIdx < n; ++colIdx) {
 			for (ulong rowIdx = threadIdx.x; rowIdx < m; rowIdx += blockDim.x) {
-				y[rowIdx] += a[colIdx * m + rowIdx] * x[colIdx];
+				y[rowIdx] += alpha * a[colIdx * m + rowIdx] * x[colIdx];
 			}
 		}
 	}

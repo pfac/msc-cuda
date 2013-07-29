@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "../../../../vendor/nvidia/cuda/cuPrintf.cu"
 // project headers
 #include <msc/cuda/array>
 #include <msc/cuda/linear_algebra/block1d/gemv>
@@ -17,8 +18,8 @@ typedef unsigned long ulong;
 
 template<typename T>
 __global__
-void test_gemv (const ulong m, const ulong n, const T * const a, const T * const x, T * const y) {
-	CUDA::linear_algebra::block1D::gemv(m, n, a, x, y);
+void test_gemv (const ulong m, const ulong n, const T alpha, const T * const a, const T * const x, T * const y) {
+	CUDA::linear_algebra::block1D::gemv(m, n, alpha, a, x, y);
 }
 
 
@@ -38,7 +39,7 @@ TEST(SmallFloatTestCase, GemvTest) {
 	CUDA::array<float> d_x(x, SMALL_DIMV);
 	CUDA::array<float> d_y(y, SMALL_DIMV);
 
-	test_gemv<<< 1 , SMALL_DIMV >>>(SMALL_DIMV, SMALL_DIMV, d_a.get_pointer(), d_x.get_pointer(), d_y.get_pointer());
+	test_gemv<<< 1 , SMALL_DIMV >>>(SMALL_DIMV, SMALL_DIMV, 1.0f, d_a.get_pointer(), d_x.get_pointer(), d_y.get_pointer());
 	HANDLE_LAST_ERROR();
 
 	d_y.to_host(y);

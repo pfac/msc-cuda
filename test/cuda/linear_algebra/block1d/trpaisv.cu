@@ -29,9 +29,9 @@ TEST(SmallFloatTestCase, GemvTest) {
 		-1, -3,  2,  0,
 		 4,  1, -3,  2
 	};
-	const float alpha = 3;
+	const float alpha = 0;
 	float x[SMALL_DIMV] = { 8,  5, 0, 4 };
-	const float s[SMALL_DIMV] = { -22.5, -9, 12, -4 };// expected
+	const float s[SMALL_DIMV] = { 9, -6, 3, 2 };// expected
 
 	CUDA::array<float> d_a(a, SMALL_DIMM);
 	CUDA::array<float> d_x(x, SMALL_DIMV);
