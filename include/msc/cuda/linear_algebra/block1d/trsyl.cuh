@@ -9,7 +9,7 @@
 namespace CUDA { namespace linear_algebra { namespace block1D {
 
 
-	/* AX - XB = C */
+	/* AX + XB = C */
 	template<typename T>
 	__device__
 	void trsyl (const ulong m, const ulong n, const T * const a, const T * const b, T * const c) {
@@ -20,7 +20,7 @@ namespace CUDA { namespace linear_algebra { namespace block1D {
 
 		for (ulong colIdx = 1; colIdx < n; ++colIdx) {
 			T * column = c + colIdx * n;
-			gemv(m, colIdx, -1.0f, c, b + colIdx * n, column);
+			gemv(m, colIdx, T(-1), c, b + colIdx * n, column);
 			trpaisv(m, a, b[colIdx * n + colIdx], column);
 		}
 	}

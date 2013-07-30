@@ -22,7 +22,7 @@ void test_trpaisv (const ulong n, const T * const a, const T alpha, T * const x)
 }
 
 
-TEST(SmallFloatTestCase, GemvTest) {
+TEST(Small01FloatTestCase, TRPAISVtest) {
 	const float a[SMALL_DIMM] = {
 		 1,  0,  0,  0,
 		 1, -2,  0,  0,

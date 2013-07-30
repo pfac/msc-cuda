@@ -5,13 +5,16 @@
 #include <msc/core/cpu/blockify.h>
 #include <msc/core/cpu/unblockify.h>
 #include <msc/cuda/array>
+#include <msc/cuda/linear_algebra/block1d/trsyl>
 #include "../../../../vendor/nvidia/cuda/cuPrintf.cu"
 
 // std C++ headers
+#include <algorithm>
 #include <limits>
 
 
 // names
+using std::min;
 using std::numeric_limits;
 
 
@@ -22,6 +25,7 @@ typedef unsigned long ulong;
 // macros
 #define IDIVCEIL(x,y) (((x) + (y) - 1) / (y))
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
+#define endl '\n'
 
 
 /** Solve the main diagonal of a matrix.
@@ -196,14 +200,46 @@ void __sqrtm_d0 (T * const mat, const ulong matDim, const ulong block_count) {
 			blckIdx * blockDim.x,
 			MIN((blckIdx + 1) * blockDim.x, matDim) - 1
 		};
-		cuPrintf("(%d-%d,%d-%d)\n", ii[0], ii[1], ii[0], ii[1]);
+		// cuPrintf("(%d-%d,%d-%d)\n", ii[0], ii[1], ii[0], ii[1]);
 
 		const ulong blckDim = ii[1] - ii[0] + 1;
 		const ulong idx = ii[0] * matDim + ii[0] * blckDim;
 
-		cuPrintf("There is a block with dimension %d at %d\n", blckDim, idx);
+		// cuPrintf("There is a block with dimension %d at %d\n", blckDim, idx);
 
 		___sqrtm(mat + idx, blckDim);
+	}
+}
+
+
+template<typename T>
+__global__
+void __sqrtm_d1 (T * const mat, const ulong matDim, const ulong block_count) {
+	const ulong bid = blockIdx.x;
+
+	for (ulong blckIdx = bid; blckIdx < block_count; blckIdx += gridDim.x) {
+		const ulong ii[2] = {
+			blckIdx * blockDim.x,
+			(blckIdx + 1) * blockDim.x - 1
+		};
+		const ulong jj[2] = {
+			(blckIdx + 1) * blockDim.x,
+			MIN((blckIdx + 2) * blockDim.x, matDim) - 1
+		};
+
+		const ulong ii_count = blockDim.x;
+		const ulong jj_count = jj[1] - jj[0] + 1;
+
+		const ulong f_first = ii[0] * matDim + ii[0] * ii_count;
+		const ulong g_first = jj[0] * matDim + jj[0] * jj_count;
+		const ulong c_first = jj[0] * matDim + ii[0] * jj_count;
+
+		const T * const f = mat + f_first;// Tii
+		const T * const g = mat + g_first;// Tjj
+		T * const c = mat + c_first;// Tij
+
+		cuPrintf("HEY\n");
+		CUDA::linear_algebra::block1D::trsyl(ii_count, jj_count, f, g, c);
 	}
 }
 
@@ -220,8 +256,8 @@ void _sqrtm (T * const host_data, const ulong matDim, const ulong block_size, co
 	__sqrtm_d0<<< cuda_blocks , cuda_threads_per_block >>>(ptr, matDim, block_count);
 	HANDLE_LAST_ERROR();
 
-	// _sqrtm_d1<<< blocks , threads_per_block >>>(ptr, m);
-	// HANDLE_LAST_ERROR();
+	__sqrtm_d1<<< cuda_blocks , cuda_threads_per_block >>>(ptr, matDim, block_count - 1);
+	HANDLE_LAST_ERROR();
 
 	// for (ulong dd = 2; dd < m; ++dd)
 	// 	_sqrtm_d(dd, ptr, m, blocks, threads_per_block);
@@ -243,8 +279,15 @@ void sqrtm (T * const host_data, const ulong matDim, const ulong block_size, con
 
 template<typename T>
 __host__
-void sqrtm (T * const host_data, const ulong matDim, const ulong block_size, const ulong cuda_threads_per_block = block_size) {
+void sqrtm (T * const host_data, const ulong matDim, const ulong block_size, const ulong cuda_threads_per_block) {
 	sqrtm(host_data, matDim, block_size, cuda_threads_per_block, IDIVCEIL(matDim, cuda_threads_per_block));
+}
+
+
+template<typename T>
+__host__
+void sqrtm (T * const host_data, const ulong matDim, const ulong block_size) {
+	sqrtm(host_data, matDim, block_size, block_size);
 }
 
 
