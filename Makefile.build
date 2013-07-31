@@ -7,21 +7,24 @@ CMAKE_BUILD_TYPES = None Debug Release RelWithDebInfo MinSizeRel
 
 DIRS = $(shell echo "$(CMAKE_BUILD_TYPES)" | tr '[A-Z]' '[a-z]')
 
-.PHONY: default $(CMAKE_BUILD_TYPES) clean purge
+.PHONY: default $(CMAKE_BUILD_TYPES) doc clean purge
 
 default: None
 
 $(DIRS):
-		@echo "    (MKDIR) $@"
-		@mkdir -p $@
+	@echo "    (MKDIR) $@"
+	@mkdir -p $@
+
+doc: None
+	@cd $<; $_ $@
 
 clean:
-		@echo "    (CLEANING)"
-		@for btype in $(CMAKE_BUILD_TYPES); do if [ -d "$$btype" ]; then cd "$$btype"; $_ clean; fi; done
+	@echo "    (CLEANING)"
+	@for btype in $(CMAKE_BUILD_TYPES); do if [ -d "$$btype" ]; then cd "$$btype"; $_ clean; fi; done
 
 purge:
-		@echo "    (PURGING)"
-		@for btype in $(CMAKE_BUILD_TYPES); do $(RM) -r "$$btype"; done
+	@echo "    (PURGING)"
+	@for btype in $(CMAKE_BUILD_TYPES); do $(RM) -r "$$btype"; done
 
 
 

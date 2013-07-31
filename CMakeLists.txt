@@ -24,6 +24,7 @@ endif ()
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 add_subdirectory(src)
+add_subdirectory(doc)
 
 # tests (begin)
 enable_testing()

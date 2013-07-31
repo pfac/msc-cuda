@@ -3,7 +3,7 @@ CMAKE_BUILD_TYPES = None Debug Release RelWithDebInfo MinSizeRel
 BUILD_DIR ?= build
 BUILD_MAKEFILE ?= Makefile.$(BUILD_DIR)
 
-.PHONY: default $(CMAKE_BUILD_TYPES) clean purge reset
+.PHONY: default $(CMAKE_BUILD_TYPES) $(CMAKE_BUILD_TYPES:%=test-%) $(CMAKE_BUILD_TYPES:%=tests-%) $(CMAKE_BUILD_TYPES:%=check-%) doc clean purge reset
 
 default: None
 
@@ -18,6 +18,10 @@ $(BUILD_DIR):
 $(BUILD_DIR)/Makefile: $(BUILD_MAKEFILE) $(BUILD_DIR)
 	@echo "  (COPY) $< => $@"
 	@cp $< $@
+
+doc: $(BUILD_DIR)
+	@echo "  (DOXYGEN)"
+	@cd $<; $_ $@
 
 clean:
 	@echo "  (CLEANING)"
