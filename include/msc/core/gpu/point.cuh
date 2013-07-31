@@ -8,7 +8,7 @@
 
 
 
-// namespace point {
+namespace point {
 
 
 
@@ -117,7 +117,7 @@
 
 
 
-// }
+}
 
 
 

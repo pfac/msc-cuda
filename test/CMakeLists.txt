@@ -5,7 +5,18 @@ function (add_gtest test source)
 	add_test(${test} ${EXECUTABLE_OUTPUT_PATH}/${executable})
 
 	add_dependencies(tests ${executable})
-endfunction (add_gtest)
+endfunction ()
+
+
+
+function (add_gtest_cuda test source)
+	set(executable ${test}-exec)
+	CUDA_ADD_EXECUTABLE(${executable} EXCLUDE_FROM_ALL ${source})
+	target_link_libraries(${executable} gtest gtest_main ${CUDA_LIBRARIES} ${ARGN})
+	add_test(${test} ${EXECUTABLE_OUTPUT_PATH}/${executable})
+
+	add_dependencies(tests ${executable})
+endfunction ()
 
 
 add_gtest (gtest.working gtest_working)
@@ -16,4 +27,6 @@ add_gtest (gtest.working gtest_working)
 
 add_subdirectory(nvidia)
 add_subdirectory(linear_algebra)
+add_subdirectory(cuda)
+add_subdirectory(core)
 

@@ -4,6 +4,9 @@
 // std C++ headers
 #include <iostream>
 
+// CUDA headers
+#include <cuda_runtime.h>
+
 
 // types
 typedef unsigned long ulong;
