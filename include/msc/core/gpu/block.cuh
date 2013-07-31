@@ -193,13 +193,13 @@ void ___sqrtm (T * const mat, const ulong matDim) {
 
 template<typename T>
 __global__
-void __sqrtm_d0 (T * const mat, const ulong matDim, const ulong block_count) {
+void __sqrtm_d0 (T * const mat, const ulong matDim, const ulong block_size, const ulong block_count) {
 	const ulong bid = blockIdx.x;
 
 	for (ulong blckIdx = bid; blckIdx < block_count; blckIdx += gridDim.x) {
 		const ulong ii[2] = {
-			blckIdx * blockDim.x,
-			MIN((blckIdx + 1) * blockDim.x, matDim) - 1
+			blckIdx * block_size,
+			MIN((blckIdx + 1) * block_size, matDim) - 1
 		};
 
 		const ulong blckDim = ii[1] - ii[0] + 1;
@@ -212,20 +212,20 @@ void __sqrtm_d0 (T * const mat, const ulong matDim, const ulong block_count) {
 
 template<typename T>
 __global__
-void __sqrtm_d1 (T * const mat, const ulong matDim, const ulong block_count) {
+void __sqrtm_d1 (T * const mat, const ulong matDim, const ulong block_size, const ulong block_count) {
 	const ulong bid = blockIdx.x;
 
 	for (ulong blckIdx = bid; blckIdx < block_count; blckIdx += gridDim.x) {
 		const ulong ii[2] = {
-			blckIdx * blockDim.x,
-			(blckIdx + 1) * blockDim.x - 1
+			blckIdx * block_size,
+			(blckIdx + 1) * block_size - 1
 		};
 		const ulong jj[2] = {
-			(blckIdx + 1) * blockDim.x,
-			MIN((blckIdx + 2) * blockDim.x, matDim) - 1
+			(blckIdx + 1) * block_size,
+			MIN((blckIdx + 2) * block_size, matDim) - 1
 		};
 
-		const ulong ii_count = blockDim.x;
+		const ulong ii_count = block_size;
 		const ulong jj_count = jj[1] - jj[0] + 1;
 
 		const ulong f_first = ii[0] * matDim + ii[0] * ii_count;
@@ -243,20 +243,20 @@ void __sqrtm_d1 (T * const mat, const ulong matDim, const ulong block_count) {
 
 template<typename T>
 __global__
-void __sqrtm_d (const ulong d, T * const mat, const ulong matDim, const ulong block_count) {
+void __sqrtm_d (const ulong d, T * const mat, const ulong matDim, const ulong block_size, const ulong block_count) {
 	const ulong bid = blockIdx.x;
 
 	for (ulong blckIdx = bid; blckIdx < block_count; blckIdx += gridDim.x) {
 		const ulong ii[2] = {
-			blckIdx * blockDim.x,
-			(blckIdx + 1) * blockDim.x - 1
+			blckIdx * block_size,
+			(blckIdx + 1) * block_size - 1
 		};
 		const ulong jj[2] = {
-			(blckIdx + d) * blockDim.x,
-			MIN((blckIdx + d + 1) * blockDim.x, matDim) - 1
+			(blckIdx + d) * block_size,
+			MIN((blckIdx + d + 1) * block_size, matDim) - 1
 		};
 
-		const ulong ii_count = blockDim.x;
+		const ulong ii_count = block_size;
 		const ulong jj_count = jj[1] - jj[0] + 1;
 
 		const ulong f_first = ii[0] * matDim + ii[0] * ii_count;
@@ -269,11 +269,11 @@ void __sqrtm_d (const ulong d, T * const mat, const ulong matDim, const ulong bl
 
 		for (ulong depIdx = 1; depIdx < d; ++depIdx) {
 			const ulong kk[2] = {
-				(blckIdx + depIdx) * blockDim.x,
-				(blckIdx + depIdx + 1) * blockDim.x - 1
+				(blckIdx + depIdx) * block_size,
+				(blckIdx + depIdx + 1) * block_size - 1
 			};
 
-			const ulong a_first = kk[0] * matDim + ii[0] * blockDim.x;
+			const ulong a_first = kk[0] * matDim + ii[0] * block_size;
 			const ulong b_first = jj[0] * matDim + kk[0] * jj_count;
 
 			const T * a = mat + a_first;
@@ -294,14 +294,14 @@ void _sqrtm (T * const host_data, const ulong matDim, const ulong block_size, co
 	CUDA::array<T> device_data(host_data, matDim * matDim);
 	T * const ptr = device_data.get_pointer();
 
-	__sqrtm_d0<<< cuda_blocks , cuda_threads_per_block >>>(ptr, matDim, block_count);
+	__sqrtm_d0<<< cuda_blocks , cuda_threads_per_block >>>(ptr, matDim, block_size, block_count);
 	HANDLE_LAST_ERROR();
 
-	__sqrtm_d1<<< cuda_blocks , cuda_threads_per_block >>>(ptr, matDim, block_count - 1);
+	__sqrtm_d1<<< cuda_blocks , cuda_threads_per_block >>>(ptr, matDim, block_size, block_count - 1);
 	HANDLE_LAST_ERROR();
 
 	for (ulong dd = 2; dd < block_count; ++dd) {
-		__sqrtm_d<<< cuda_blocks , cuda_threads_per_block >>>(dd, ptr, matDim, block_count - dd);
+		__sqrtm_d<<< cuda_blocks , cuda_threads_per_block >>>(dd, ptr, matDim, block_size, block_count - dd);
 		HANDLE_LAST_ERROR();
 	}
 
