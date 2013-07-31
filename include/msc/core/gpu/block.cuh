@@ -5,6 +5,7 @@
 #include <msc/core/cpu/blockify.h>
 #include <msc/core/cpu/unblockify.h>
 #include <msc/cuda/array>
+#include <msc/cuda/linear_algebra/block1d/gemm>
 #include <msc/cuda/linear_algebra/block1d/trsyl>
 #include "../../../../vendor/nvidia/cuda/cuPrintf.cu"
 
@@ -200,12 +201,9 @@ void __sqrtm_d0 (T * const mat, const ulong matDim, const ulong block_count) {
 			blckIdx * blockDim.x,
 			MIN((blckIdx + 1) * blockDim.x, matDim) - 1
 		};
-		// cuPrintf("(%d-%d,%d-%d)\n", ii[0], ii[1], ii[0], ii[1]);
 
 		const ulong blckDim = ii[1] - ii[0] + 1;
 		const ulong idx = ii[0] * matDim + ii[0] * blckDim;
-
-		// cuPrintf("There is a block with dimension %d at %d\n", blckDim, idx);
 
 		___sqrtm(mat + idx, blckDim);
 	}
@@ -238,7 +236,52 @@ void __sqrtm_d1 (T * const mat, const ulong matDim, const ulong block_count) {
 		const T * const g = mat + g_first;// Tjj
 		T * const c = mat + c_first;// Tij
 
-		cuPrintf("HEY\n");
+		CUDA::linear_algebra::block1D::trsyl(ii_count, jj_count, f, g, c);
+	}
+}
+
+
+template<typename T>
+__global__
+void __sqrtm_d (const ulong d, T * const mat, const ulong matDim, const ulong block_count) {
+	const ulong bid = blockIdx.x;
+
+	for (ulong blckIdx = bid; blckIdx < block_count; blckIdx += gridDim.x) {
+		const ulong ii[2] = {
+			blckIdx * blockDim.x,
+			(blckIdx + 1) * blockDim.x - 1
+		};
+		const ulong jj[2] = {
+			(blckIdx + d) * blockDim.x,
+			MIN((blckIdx + d + 1) * blockDim.x, matDim) - 1
+		};
+
+		const ulong ii_count = blockDim.x;
+		const ulong jj_count = jj[1] - jj[0] + 1;
+
+		const ulong f_first = ii[0] * matDim + ii[0] * ii_count;
+		const ulong g_first = jj[0] * matDim + jj[0] * jj_count;
+		const ulong c_first = jj[0] * matDim + ii[0] * jj_count;
+
+		const T * const f = mat + f_first;// Tii
+		const T * const g = mat + g_first;// Tjj
+		T * const c = mat + c_first;// Tij
+
+		for (ulong depIdx = 1; depIdx < d; ++depIdx) {
+			const ulong kk[2] = {
+				(blckIdx + depIdx) * blockDim.x,
+				(blckIdx + depIdx + 1) * blockDim.x - 1
+			};
+
+			const ulong a_first = kk[0] * matDim + ii[0] * blockDim.x;
+			const ulong b_first = jj[0] * matDim + kk[0] * jj_count;
+
+			const T * a = mat + a_first;
+			const T * b = mat + b_first;
+
+			CUDA::linear_algebra::block1D::gemm(ii_count, jj_count, ii_count, T(-1), a, b, T(1), c);
+		}
+
 		CUDA::linear_algebra::block1D::trsyl(ii_count, jj_count, f, g, c);
 	}
 }
@@ -251,16 +294,16 @@ void _sqrtm (T * const host_data, const ulong matDim, const ulong block_size, co
 	CUDA::array<T> device_data(host_data, matDim * matDim);
 	T * const ptr = device_data.get_pointer();
 
-	
-
 	__sqrtm_d0<<< cuda_blocks , cuda_threads_per_block >>>(ptr, matDim, block_count);
 	HANDLE_LAST_ERROR();
 
 	__sqrtm_d1<<< cuda_blocks , cuda_threads_per_block >>>(ptr, matDim, block_count - 1);
 	HANDLE_LAST_ERROR();
 
-	// for (ulong dd = 2; dd < m; ++dd)
-	// 	_sqrtm_d(dd, ptr, m, blocks, threads_per_block);
+	for (ulong dd = 2; dd < block_count; ++dd) {
+		__sqrtm_d<<< cuda_blocks , cuda_threads_per_block >>>(dd, ptr, matDim, block_count - dd);
+		HANDLE_LAST_ERROR();
+	}
 
 	device_data.to_host(host_data);
 }
