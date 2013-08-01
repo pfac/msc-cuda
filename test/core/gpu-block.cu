@@ -35,7 +35,7 @@ TEST(MainDiagonalTestCase, BlockSmallTest) {
 
 	CUDA::array<float> d_t(h_t, SMALL_DIMM);// device data
 
-	__sqrtm_d0<<< IDIVCEIL(SMALL_DIMV, SMALL_BLCK) , SMALL_BLCK >>>(d_t.get_pointer(), SMALL_DIMV, SMALL_BLCK);
+	__sqrtm_d0<<< IDIVCEIL(SMALL_DIMV, SMALL_BLCK) , SMALL_BLCK >>>(d_t.get_pointer(), SMALL_DIMV, SMALL_BLCK, IDIVCEIL(SMALL_DIMV, SMALL_BLCK));
 	HANDLE_LAST_ERROR();
 
 	d_t.to_host(h_t);

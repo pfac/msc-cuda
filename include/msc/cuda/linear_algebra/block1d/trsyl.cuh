@@ -19,7 +19,7 @@ namespace CUDA { namespace linear_algebra { namespace block1D {
 		}
 
 		for (ulong colIdx = 1; colIdx < n; ++colIdx) {
-			T * column = c + colIdx * n;
+			T * column = c + colIdx * m;
 			gemv(m, colIdx, T(-1), c, b + colIdx * n, column);
 			trpaisv(m, a, b[colIdx * n + colIdx], column);
 		}

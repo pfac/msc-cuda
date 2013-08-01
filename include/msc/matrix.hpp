@@ -4,6 +4,7 @@
 // std C++ headers
 #include <fstream>
 #include <sstream>
+#include <string>
 
 
 // names
@@ -11,6 +12,7 @@ using std::ios_base;
 using std::istream;
 using std::ifstream;
 using std::ostream;
+using std::string;
 using std::stringstream;
 
 
