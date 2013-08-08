@@ -6,6 +6,9 @@
 #include <msc/cuda/error>
 #include "../../../../vendor/nvidia/cuda/cuPrintf.cu"
 
+// CUK headers
+#include <cuk/stopwatch>
+
 
 
 namespace point {
@@ -95,13 +98,14 @@ namespace point {
 
 	template<typename T>
 	__host__
-	void sqrtm (T * const h_t, const ulong m) {
+	void sqrtm (T * const h_t, const ulong m, double& nanoseconds) {
+		cuk::stopwatch sw;
 		CUDA::array<T> d_t(h_t, m * m);
 		T * const ptr = d_t.get_pointer();
 		const ulong threads_per_block = 32;
 		const ulong blocks = (m + threads_per_block - 1) / threads_per_block;
 
-		
+		sw.start();
 
 		_sqrtm_d0<<< blocks , threads_per_block >>>(ptr, m);
 		HANDLE_LAST_ERROR();
@@ -112,7 +116,10 @@ namespace point {
 		for (ulong dd = 2; dd < m; ++dd)
 			_sqrtm_d(dd, ptr, m, blocks, threads_per_block);
 
+		sw.stop();
+
 		d_t.to_host(h_t);
+		nanoseconds = sw.ns();
 	}
 
 

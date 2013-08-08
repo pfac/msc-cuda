@@ -4,6 +4,7 @@
 // project headers
 #include <msc/core/cpu/blockify.h>
 #include <msc/core/cpu/unblockify.h>
+#include <msc/core/gpu/point>
 #include <msc/cuda/array>
 #include <msc/cuda/linear_algebra/block1d/gemm>
 #include <msc/cuda/linear_algebra/block1d/trsyl>
@@ -13,6 +14,8 @@
 #include <algorithm>
 #include <limits>
 
+// CUK headers
+#include <cuk/stopwatch>
 
 // names
 using std::min;
@@ -289,10 +292,14 @@ void __sqrtm_d (const ulong d, T * const mat, const ulong matDim, const ulong bl
 
 template<typename T>
 __host__
-void _sqrtm (T * const host_data, const ulong matDim, const ulong block_size, const ulong cuda_threads_per_block, const ulong cuda_blocks) {
+void _sqrtm (T * const host_data, const ulong matDim, const ulong block_size, double& nanoseconds, const ulong cuda_threads_per_block, const ulong cuda_blocks) {
 	const ulong block_count = IDIVCEIL(matDim, cuda_threads_per_block);
+
+	cuk::stopwatch sw;
 	CUDA::array<T> device_data(host_data, matDim * matDim);
 	T * const ptr = device_data.get_pointer();
+
+	sw.start();
 
 	__sqrtm_d0<<< cuda_blocks , cuda_threads_per_block >>>(ptr, matDim, block_size, block_count);
 	HANDLE_LAST_ERROR();
@@ -305,32 +312,41 @@ void _sqrtm (T * const host_data, const ulong matDim, const ulong block_size, co
 		HANDLE_LAST_ERROR();
 	}
 
+	sw.stop();
+
 	device_data.to_host(host_data);
+	nanoseconds = sw.ns();
 }
 
 
 template<typename T>
 __host__
-void sqrtm (T * const host_data, const ulong matDim, const ulong block_size, const ulong cuda_threads_per_block, const ulong cuda_blocks) {
-	T * const blockified_host_data = new T[matDim * matDim];
-	blockify(host_data, matDim, matDim, block_size, block_size, blockified_host_data);
-	_sqrtm(blockified_host_data, matDim, block_size, cuda_threads_per_block, cuda_blocks);
-	unblockify(blockified_host_data, matDim, matDim, block_size, block_size,  host_data);
-	delete[] blockified_host_data;
+void sqrtm (T * const host_data, const ulong matDim, const ulong block_size, double& nanoseconds, const ulong cuda_threads_per_block, const ulong cuda_blocks) {
+	if (block_size > 1) {
+		T * const blockified_host_data = new T[matDim * matDim];
+
+		blockify(host_data, matDim, matDim, block_size, block_size, blockified_host_data);
+		_sqrtm(blockified_host_data, matDim, block_size, nanoseconds, cuda_threads_per_block, cuda_blocks);
+		unblockify(blockified_host_data, matDim, matDim, block_size, block_size,  host_data);
+
+		delete[] blockified_host_data;
+	} else {
+		point::sqrtm(host_data, matDim, nanoseconds);
+	}
 }
 
 
 template<typename T>
 __host__
-void sqrtm (T * const host_data, const ulong matDim, const ulong block_size, const ulong cuda_threads_per_block) {
-	sqrtm(host_data, matDim, block_size, cuda_threads_per_block, IDIVCEIL(matDim, cuda_threads_per_block));
+void sqrtm (T * const host_data, const ulong matDim, const ulong block_size, double& nanoseconds, const ulong cuda_threads_per_block) {
+	sqrtm(host_data, matDim, block_size, nanoseconds, cuda_threads_per_block, IDIVCEIL(matDim, cuda_threads_per_block));
 }
 
 
 template<typename T>
 __host__
-void sqrtm (T * const host_data, const ulong matDim, const ulong block_size) {
-	sqrtm(host_data, matDim, block_size, block_size);
+void sqrtm (T * const host_data, const ulong matDim, const ulong block_size, double& nanoseconds) {
+	sqrtm(host_data, matDim, block_size, nanoseconds, block_size);
 }
 
 

@@ -23,12 +23,16 @@ using std::cout;
 
 template<typename T>
 int _main () {
+	double nanoseconds;
 	matrix<T> t(filename);
 
-	sqrtm(t.data_ptr(), t.rows(), block_size);
+	sqrtm(t.data_ptr(), t.rows(), block_size, nanoseconds);
 
 	if (print_sqrtm)
-		cout << t << endl; 
+		cout << t << endl;
+
+	if (print_time)
+		cout << nanoseconds << endl;
 
 	return 0;
 }
