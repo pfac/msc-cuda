@@ -1,0 +1,1 @@
+add_executable(up_tri upper_triangular)
