@@ -7,6 +7,8 @@
 	using std::string;
 
 
+typedef unsigned long ulong;
+
 #ifndef MAIN
 #define SCOPE extern
 #else
@@ -14,6 +16,7 @@
 #endif
 
 SCOPE bool control;
+SCOPE ulong dimension;
 SCOPE string output_filename;
 
 /** Parse the program arguments given in the command line.

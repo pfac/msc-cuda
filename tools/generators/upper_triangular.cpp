@@ -38,7 +38,7 @@ void upper_triangular_control (Mat<T>& matrix) {
 		
 		#pragma omp parallel for
 		for (ulong i = 0; i < n; ++i)
-			matrix(i,j) = (j > i) ? T(0) : ++x;
+			matrix(i,j) = (j < i) ? T(0) : ++x;
 	}
 }
 
@@ -59,17 +59,15 @@ void save (ostream& out, const Mat<T>& matrix) {
 
 
 int main (int argc, char * argv[]) {
-	ulong dimension = ATOI(argv[1]);
+	parse_arguments(argc, argv);
 
 	Mat<double> matrix(dimension, dimension);
 	upper_triangular(matrix, control);
 
 	if (output_filename.empty())
 		matrix.save(cout, arma_ascii);
-	else {
-		ofstream out(output_filename.c_str());
-		matrix.save(out, arma_ascii);
-	}
+	else
+		matrix.save(output_filename, arma_ascii);
 
 	return 0;
 }

@@ -46,14 +46,14 @@ void parse_arguments (int argc, char *argv[]) {
 
 		options_description hidden_options;
 		hidden_options.add_options()
-			("input-file", value<string>(&filename), "")
+			("dimension", value<ulong>(&dimension), "")
 		;
 
 		options_description command_line_options;
 		command_line_options.add(visible_options).add(hidden_options);
 
 		positional_options_description pod;
-		pod.add("input-file", -1);
+		pod.add("dimension", -1);
 
 		variables_map vm;
 		store(command_line_parser(argc, argv).options(command_line_options).positional(pod).run(), vm);

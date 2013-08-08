@@ -15,6 +15,9 @@ include_directories(${CUDA_INCLUDE_DIRS})
 
 find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
+add_definitions(-DARMA_DONT_USE_WRAPPER -DARMA_USE_BLAS)
+
+find_package(BLAS)
 
 if (UNIX AND NOT APPLE)
 	find_library(RT_LIBRARY rt)
@@ -24,6 +27,7 @@ endif ()
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 add_subdirectory(src)
+add_subdirectory(tools)
 add_subdirectory(doc)
 
 # tests (begin)
