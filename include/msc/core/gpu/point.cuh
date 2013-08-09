@@ -123,6 +123,13 @@ namespace point {
 	}
 
 
+	template<typename T>
+	__host__
+	void sqrtm (T * const h_t, const ulong m) {
+		double nanoseconds;
+		sqrtm(h_t, m, nanoseconds);
+	}
+
 
 }
 

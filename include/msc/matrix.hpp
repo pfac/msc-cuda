@@ -3,14 +3,18 @@
 
 // std C++ headers
 #include <fstream>
+#include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
 
 
 // names
+using std::cerr;
 using std::ios_base;
 using std::istream;
 using std::ifstream;
+using std::numeric_limits;
 using std::ostream;
 using std::string;
 using std::stringstream;
@@ -29,6 +33,47 @@ class matrix {
 	ulong r;
 	ulong c;
 	T * content;
+
+
+	//
+	// class methods
+	//
+	static
+	string header();
+
+
+	static
+	T convert_naninf (const string& token) {
+		T result;
+		size_t l = token.size();
+
+		if (l == 3 || l == 4) {
+			const bool neg = (token[0] == '-');
+			const bool pos = (token[0] == '+');
+
+			const size_t offset = ((neg || pos) && l == 4);
+
+			const string s = token.substr(offset, 3);
+			
+			if (s == "inf" || s == "Inf" || s == "INF")
+				result = numeric_limits<T>::infinity();
+			else if (s == "nan" || s == "Nan" || s == "NaN" || s == "NAN")
+				result = numeric_limits<T>::quiet_NaN();
+			else {
+				stringstream ss(token);
+				ss >> result;
+			}
+
+			if (neg)
+				result = -result;
+
+		} else {
+			stringstream ss(token);
+			ss >> result;
+		}
+
+		return result;
+	}
 
 	//
 	// setters
@@ -53,6 +98,7 @@ class matrix {
 
 
 public:
+
 	matrix (const string& filename) : r(0), c(0), content(NULL) {
 		ifstream file;
 		file.open(filename.c_str());
@@ -95,32 +141,36 @@ public:
 	// friends
 	//
 	friend
-	istream& operator>> (istream& in, matrix<T>& m) {
-		{// first line: dimensions
-			string line;
+	istream& operator>> (istream& in, matrix<T>& mat) {
+		string header;
+
+		in >> header;
+		in >> mat.r;
+		in >> mat.c;
+
+		if (header == "ARMA_MAT_TXT_FN008") {
+			mat.resize();
+
+			string token;
 			stringstream ss;
-			ulong r, c;
 
-			getline(in, line);
-			ss << line;
-			ss >> r;
-			ss >> c;
-			m.resize(r, c);
-		}
+			for (ulong i = 0; i < mat.r; ++i) {
+				for (ulong j = 0; j < mat.c; ++j) {
+					in >> token;
 
-		{// next R lines: content (C elements in each line)
-			const ulong rows = m.rows();
-			const ulong cols = m.cols();
+					ss.clear();
+					ss.str(token);
 
-			for (ulong i = 0; i < rows; ++i) {
-				string line;
-				stringstream ss;
+					mat(i,j) = T(0);
+					ss >> mat(i,j);
 
-				getline(in, line);
-				ss << line;
-				for (ulong j = 0; j < cols; ++j)
-					ss >> m(i,j);
+					if (ss.fail())
+						mat(i,j) = matrix::convert_naninf(token);
+				}
 			}
+		} else {
+			cerr << "ERROR[stream >> matrix]: incorrect header \"" << header << '\"' << endl;
+			cerr << "   expecting \"" << matrix<T>::header() << '\"' << endl;
 		}
 
 		return in;
@@ -144,6 +194,14 @@ public:
 		return out;
 	}
 };
+
+
+template<>
+string matrix<float>::header () { return "ARMA_MAT_TXT_FN004"; }
+
+
+template<>
+string matrix<double>::header () { return "ARMA_MAT_TXT_FN008"; }
 
 
 #undef endl
