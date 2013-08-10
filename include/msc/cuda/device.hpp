@@ -60,21 +60,22 @@ struct device : public cudaDeviceProp {
 
 
 	/* human readable */
-	string str_global_memory () const {
+	static
+	string str_memory (const ulong bytes) {
 		double total;
 		char prefix;
 
-		if (totalGlobalMem > 1073741824) {
-			total = totalGlobalMem / 1073741824.0;
+		if (bytes > 1073741824) {
+			total = bytes / 1073741824.0;
 			prefix = 'G';
-		} else if (totalGlobalMem > 1048576) {
-			total = totalGlobalMem / 1048576.0;
+		} else if (bytes > 1048576) {
+			total = bytes / 1048576.0;
 			prefix = 'M';
-		} else if (totalGlobalMem > 1024) {
-			total = totalGlobalMem / 1024.0;
+		} else if (bytes > 1024) {
+			total = bytes / 1024.0;
 			prefix = 'K';
 		} else {
-			total = totalGlobalMem;
+			total = bytes;
 			prefix = '\0';
 		}
 
@@ -97,9 +98,11 @@ struct device : public cudaDeviceProp {
 		return out
 			<< '[' << dev.name << ']' << endl
 			<< "CUDA Capability: " << dev.major << '.' << dev.minor << endl
-			<< "Global memory:   " << dev.str_global_memory() << endl
+			<< "Global memory:   " << device::str_memory(dev.totalGlobalMem) << endl
 			<< "Multiprocessors: " << dev.multiProcessorCount << endl
 			<< "CUDA cores:      " << dev.cores_total() << '(' << dev.cores_per_sm() << " cores per SM)" << endl
+			<< "Constant memory: " << device::str_memory(dev.totalConstMem) << endl
+			<< "Shared memory:   " << device::str_memory(dev.sharedMemPerBlock) <<  " per block" << endl
 			;
 	}
 };

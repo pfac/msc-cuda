@@ -44,7 +44,7 @@ void parse_arguments (int argc, char *argv[]) {
 				"Number of threads to use."
 			)
 			(
-				"no-print",
+				"ignore-output",
 				"Do not print the square root matrix."
 			)
 			(
@@ -78,7 +78,7 @@ void parse_arguments (int argc, char *argv[]) {
 			exit(0);
 		}
 
-		print_sqrtm = vm.count("no-print") == 0;
+		ignore_output = vm.count("ignore-output") > 0;
 		print_error = vm.count("error") > 0;
 		print_time = vm.count("time") > 0;
 		verbose = vm.count("verbose") > 0;

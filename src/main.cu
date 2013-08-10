@@ -6,8 +6,6 @@
 #include <msc/matrix.hpp>
 #include <msc/core/gpu/block>
 
-#include "../vendor/nvidia/cuda/cuPrintf.cu"
-
 // stc C++ headers
 #include <iostream>
 
@@ -28,7 +26,7 @@ int _main () {
 
 	sqrtm(t.data_ptr(), t.rows(), block_size, nanoseconds);
 
-	if (print_sqrtm)
+	if (!ignore_output)
 		cout << t << endl;
 
 	if (print_time)
@@ -48,18 +46,11 @@ int main (int argc, char * argv[]) {
 	     ;
 	#endif
 
-	cudaPrintfInit();
-
 	CUDA::query_devices(true);
 	if (CUDA::get_device(0).supports_double_precision())
 		retval = _main<double>();
 	else
 		retval = _main<float>();
-
-	cudaDeviceSynchronize();
-	cudaPrintfDisplay(stdout, true);
-	cudaPrintfEnd();
-	cudaDeviceReset();
 
 	return retval;
 }

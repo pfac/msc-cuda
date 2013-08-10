@@ -16,8 +16,8 @@
 SCOPE string   filename;
 SCOPE unsigned block_size;
 SCOPE unsigned threads;//< Number of threads to use
+SCOPE bool     ignore_output;
 SCOPE bool     verbose;
-SCOPE bool     print_sqrtm;
 SCOPE bool     print_error;
 SCOPE bool     print_time;
 
