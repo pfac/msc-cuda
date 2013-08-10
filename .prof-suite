@@ -1,0 +1,14 @@
+[DEFAULT]
+log-filename = logs/prof.log
+log-level    = INFO
+[SizesProfiler]
+exec = prof-threads
+sizes = 128,2048
+[ThreadsProfiler]
+exec = kbest
+threads    = 1,2,4,8,16,32
+[KBest]
+diff = 0.05
+k    = 3
+min  = 10
+max  = 30
