@@ -1,0 +1,19 @@
+%!TEX root = ../extabst.tex
+% \section{Heterogeneous Platforms}
+% \label{sec:het:plats}
+\paragraphh{Heterogeneous Platforms}
+
+In this work, heterogeneous platforms contain one or more computational nodes interconnected through a low latency communication topology. Each node contains one or more multi-core conventional computing units, and hardware accelerator device(s). These platforms are said to be heterogeneous since they collaboratively use different types of computing units, such as \gpus and \intel\mic devices.
+
+This work intends to efficiently implement the diagonal approach of the matrix square root algorithm on heterogeneous platforms, where it may take advantage of the massive parallelism available in these systems. Attaining high performance in heterogeneous platforms is not trivial, as it requires understanding the programming model (or even the paradigm) for a particular device and the underlying hardware architecture.
+
+In a computational node, the multi-core \cpu devices share a single memory space, despite the existence of multiple memory slots.
+This programming model is known as shared memory.
+Current heterogeneous nodes implement the distributed memory model: each accelerator device has its own distinct memory space, separated from the one used by the multi-core and other accelerator devices; and each computational node has memory spaces distinct from those used by the other nodes. Communication between distinct spaces is expensive and must be avoided.
+
+Efficient development for these platforms can be complex: it requires efficient workload and data distribution among available resources, transparent managing of the communications among memory spaces and adapting the implementation to the particular characteristics of each device. Tools are available to help developers to manage some of these issues, and this work addresses the following:
+\begin{itemize}
+	\item tools for automatic workload distribution of parallel code, among shared memory computing units: OpenMP and \tbb\cite{TBB};
+	\item tools to extend scheduling to accelerator devices: \mbox{OpenACC\cite{OpenACC}} and \tbb (for \intel devices)\cite{MIC:TBB};
+	\item tools to transparently integrate distributed memory devices in a single computing node, using a single address space: \gama, a framework under development at University of Minho and University of Texas at Austin \cite{Mariano:Alves:2012}.
+\end{itemize}

@@ -1,0 +1,14 @@
+%!TEX root = ../extabst.tex
+
+\paragraphh{Context}
+
+The square root of a matrix is a common operation in problems of several fields, including Markov models of finance, the solution to differential equations, computation of the polar decomposition and the matrix sign function. Efficient coding of numerical algorithms that takes advantage of recent diversity of computing resources allows the study of more complex problems \cite{Hill:Marty:2008}.
+
+Previous work on this algorithm coding has been mainly focused on multi-core shared memory environments; heterogeneous distributed memory environments are still unexplored. The available resources in the recent hardware accelerators hold great potential to improve performance and efficiency.
+
+The \acf{NAG}\cite{NAG} delivers a highly reliable commercial numerical library containing several specialized multi-core functions for matrix operations. While the \nag library includes some implementations for CUDA-enabled \gpu accelerators in heterogeneous platforms, it has yet no matrix square root function optimized for these devices \cite{NAG:GPU:0:6}.
+
+The same applies for \gpu libraries listed by \nvidia \cite{ACCELEREYES:WIKI:SQRTM,CULA:LAPACK,NVIDIA:CUBLAS:5:0,NVIDIA:CUSPARSE:5:0,CUSP:FEATURES}.
+In particular, the \magma project, which aims to develop a \lapack competitor package for heterogeneous platforms, did not address yet the matrix square root computation \cite{PLASMA:MAGMA}.
+
+In a previous work, E. Deadman (NAG) and others devised a blocked approach to the Schur method to compute the square root of a matrix in a multi-core environment \cite{Deadman:Higham:Ralha:2013}. While blocked approaches aim a more efficient use of the memory hierarchy, they are also very well suited for vector computing devices, such as \gpus and the recent \intel\mic architecture. This work addresses efficient computation of the matrix square root in heterogeneous platforms.

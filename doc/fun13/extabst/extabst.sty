@@ -1,0 +1,85 @@
+%!TEX root = extabst.tex
+\ProvidesPackage{extabst}
+
+\usepackage{../../shared/common}
+
+\usepackage{geometry}
+\geometry{paper=a4paper}
+\geometry{top=18mm}
+\geometry{bottom=18mm}
+\geometry{left=18mm}
+\geometry{right=18mm}
+
+
+
+%%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
+%%%%%        SHORTCUTS        %%%%%
+%%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
+\newcommand{\linklike}[1]{{\smaller\smaller\ttfamily #1}}
+\newcommand{\email}[1]{\href{mailto:#1}{\linklike{#1}}}
+
+\newcommand{\tdi}[1]{\todo[inline]{#1}}
+
+\newcommand{\intel}{Intel\xspace}
+\newcommand{\nvidia}{NVidia\xspace}
+\newcommand{\xeon}{Xeon\xspace}
+
+\newcommand{\amd}{\acs{AMD}\xspace}
+\newcommand{\blas}{\acs{BLAS}\xspace} 
+\newcommand{\cpu}{\ac{CPU}\xspace} 
+\newcommand{\cpus}{\acp{CPU}\xspace}
+\newcommand{\cuda}{\acs{CUDA}\xspace}
+\newcommand{\dsp}{\ac{DSP}\xspace}
+\newcommand{\dsps}{\acp{DSP}\xspace}
+\newcommand{\gama}{\ac{GAMA}\xspace}
+\newcommand{\gpu}{\ac{GPU}\xspace}
+\newcommand{\gpus}{\acp{GPU}\xspace}
+\newcommand{\gpgpu}{\ac{GPGPU}\xspace}
+\newcommand{\gpgpus}{\acp{GPGPU}\xspace}
+\newcommand{\lapack}{\acs{LAPACK}\xspace}
+\newcommand{\hetplat}{\ac{HetPlat}\xspace}
+\newcommand{\hetplats}{\acp{HetPlat}\xspace}
+\newcommand{\hpc}{\ac{HPC}\xspace}
+\newcommand{\magma}{\ac{MAGMA}\xspace}
+\newcommand{\mkl}{\ac{MKL}\xspace}
+\newcommand{\mic}{\ac{MIC}\xspace}
+\newcommand{\mics}{\acp{MIC}\xspace}
+\newcommand{\nag}{\ac{NAG}\xspace}
+\newcommand{\pci}{\acs{PCI}\xspace}
+\newcommand{\pcie}{\ac{PCIe}\xspace}
+\newcommand{\search}{SeARCH\xspace}
+\newcommand{\sfu}{\ac{SFU}\xspace}
+\newcommand{\sfus}{\acp{SFU}\xspace}
+\newcommand{\simd}{\ac{SIMD}\xspace}
+\newcommand{\simt}{\ac{SIMT}\xspace}
+\newcommand{\sm}{\ac{SM}\xspace} 
+\newcommand{\sms}{\acp{SM}\xspace}
+\newcommand{\smx}{\acs{SMX}\xspace}
+\newcommand{\tbb}{\ac{TBB}\xspace}
+\newcommand{\uminho}{\ac{UMinho}\xspace}
+\newcommand{\utexas}{\ac{UTexas}\xspace}
+
+
+
+%%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
+%%%%%       TITLE PAGE        %%%%%
+%%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
+\titlehead{%
+Advances~in~Matrix~Functions~and~Matrix~Equations, Manchester UK, 2013%
+%\hfill%
+%University~of~Minho%
+}
+
+%\subject{Dissertation for Master's Degree in Informatics Engineering}
+\subject{Work in progress}
+
+\author{%
+\smaller Pedro~Costa\\\email{pfac@di.uminho.pt}%
+\and\smaller Alberto~Proença\\\email{aproenca@di.uminho.pt}%
+\and\smaller Rui~Ralha\footnote{Dep. Math and Applications, University of Minho, Portugal}\\\email{r\_ralha@math.uminho.pt}%
+}
+
+\title{Efficient Computation of the Matrix Square Root in Heterogeneous Platforms}
+
+%\date{University~of~Minho, March 2013}
+\date{\vspace{-.5cm}}

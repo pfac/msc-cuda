@@ -1,0 +1,14 @@
+\documentclass[../thesis]{subfiles}
+
+\begin{document}
+	\chapter{CUDA}
+
+	\section{Implementation}
+	Unlike \mic devices, \gpus differ greatly from \cpus. As such, this kind of devices have a distinct programming model which require a shift in the way the programmer thinks about the algorithm. Consequently, little of the code implemented in the previous chapters is reusable in a CUDA implementation of the matrix square root algorithm.
+
+	First of all, the NVidia compiler proved to be incompatible with the Armadillo library. While the usage of this library was reduced to loading the matrix file and outputting the result in the previous chapter, it had to be completely removed from the CUDA implementation. The reason for this is an incompatibility of the \nvidia compiler with recent versions of the GNU compiler. Since older versions of the GNU compiler are required, some of the more recent features of the C++ language (used by Armadillo) are rejected. While the incompatibility was isolated and found not to be related to the IO operations, the library is prepared to have all its headers used simultaneously, which resulted in very tight coupling.
+
+	Removing Armadillo implied that the code to load the matrix files had to be ported to a compatible implementation. To ease the task, \texttt{ARMA\_ASCII} format was selected as the reference format. This is the simplest text format in Armadillo, with the files having a small header (meant to identify the data type and the dimensions of the matrix) immediately followed by the matrix content.
+
+	Contrary to the implementations in the previous chapters, a CUDA implementation of this algorithm can not take advantage of an optimized BLAS library. The existing libraries assume that its kernels will have the entire device available. As seen in the previous implementations, this is not the case. Both the point and block methods contain independent parallel calls to BLAS functions. All these functions have to be reimplemented in the scope of this algorithm.
+\end{document}

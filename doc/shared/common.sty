@@ -1,0 +1,40 @@
+\ProvidesPackage{common}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese,english]{babel}
+
+\usepackage{amsmath}
+\usepackage{acronym}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage{listings}
+\usepackage{pdfpages}    % enables \includepdf
+\usepackage{relsize}
+\usepackage{subfiles}
+\usepackage{todonotes}
+\usepackage{xspace}
+
+\usepackage{varioref}
+\usepackage[colorlinks=false]{hyperref}
+\usepackage[noabbrev,capitalise]{cleveref}
+\usepackage{breakurl}
+
+\usepackage{csquotes}
+\usepackage[maxnames=1,sorting=none]{biblatex}
+\usepackage[retainorgcmds]{IEEEtrantools}
+
+%%%%% %%%%% %%%%% %%%%% %%%%%
+%%%%%       HACKS       %%%%%
+%%%%% %%%%% %%%%% %%%%% %%%%%
+
+% equation label for the ieeeqnarray environment
+\newcommand{\IEEElabel}[1]{\begingroup\addtocounter{equation}{-1}%
+\refstepcounter{equation}\label{#1}\endgroup}
+
+%	Paragraph (title) with linebreak (like subsubsubsection)
+\newcommand{\paragraphh}[1]{\paragraph{#1\hfill}\hfill
+
+\smallskip
+}
+

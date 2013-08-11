@@ -1,0 +1,11 @@
+%!TEX root = ../extabst.tex
+% \section{Method}
+% \label{sec:method}
+\paragraphh{Results}
+
+To evaluate the scalability of the algorithm in a multi-core environment, tests were performed varying the number of threads and the dimension of the matrix for each approach and method: rows vs diagonals, block method vs point method. The column approach is deliberately left out, since it is similar to the row approach and is less intuitive to implement in C/C++ obtaining good cache efficiency.
+
+Results show for each combination approach-method the execution time for each matrix dimension: one fitting in L2 cache, another for L3 and two large enough to force main memory accesses.
+Results are presented in a normalized way for the sake of readability.
+
+Tests were performed using a computational node in the \search\footnote{\url{http://search.di.uminho.pt}} cluster at \uminho, with two \intel\xeon E5-2650 devices at 2.0 GHz and 64 GB RAM. Having hardware support for 32 threads (with Hyper-Threading), runs were measured using powers of 2 as the number of threads, increasing until performance drops.

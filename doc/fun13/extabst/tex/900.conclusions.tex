@@ -1,0 +1,6 @@
+%!TEX root = ../extabst.tex
+% \section{Conclusion}
+% \label{sec:conclusion}
+
+So far, all described implementations were first implemented in a multi-core environment, using point and block methods. The next step focused on the scalability study of the algorithm: in \cite{Deadman:Higham:Ralha:2013}, the authors performed tests using the full parallelism supported by the hardware and the sequential version; no tests were performed to verify how the execution time changes as the number of threads increases.
+These results help to plan efficient implementations with hardware accelerators. In particular, it is relevant to find bottlenecks as this will condition further algorithm optimizations to explore massive parallelism.

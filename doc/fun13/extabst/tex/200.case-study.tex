@@ -1,0 +1,19 @@
+%!TEX root = ../extabst.tex
+\paragraphh{Matrix Square Roots}
+
+The square root of a matrix $A$ is any matrix $X$ which satisfies the equation $A=X^2$. When it exists, it is not unique. When $A$ has no real negative eigenvalues, it has a unique square root whose eigenvalues all lie in the open right half-plane (i.e.\ have non-negative real parts) \cite[20]{Higham:2008:FM}. This is the so-called principal square root $A^{1/2}$ and plays a major role in applications. Therefore, we will be interested in computing such square root whenever it exists.
+
+The Schur method of Björck and Hammarling \cite{Bjorck:Hammarling:1983} computes the square root of the matrix by reducing $A$ to the upper triangular form $T$ and solving
+\begin{IEEEeqnarray}{rCl}
+U_{ii}^2 & = & T_{ii}\enspace\mathrm{,}\IEEElabel{eq:sqrtm:diag}\\
+U_{ii}U_{ij} + U_{ij}U_{jj} & = & T_{ij} - \sum^{j-1}_{k = i + 1}{U_{ik}U_{kj}}\enspace\mathrm{,}\IEEElabel{eq:sqrtm:ndiag}
+\end{IEEEeqnarray}
+where $U^2=T$, being $U$ also upper triangular. This is the most numerically stable method and it is implemented in MATLAB as the \texttt{sqrtm} and \texttt{sqrtm\_real} functions \cite{Higham:MFT}.
+
+\Cref{eq:sqrtm:diag,eq:sqrtm:ndiag} describe an algorithm which can be computed in three distinct ways, due to the dependency each element has on those on its left and below. In \cite{Deadman:Higham:Ralha:2013}, the first implementation, in Fortran, iterates over the columns of a matrix, from left to right, and follows the column from the bottom up. At any given point, only one element of the matrix is ready to be computed. This implementation, while impossible to parallelize, allows for a more efficient usage of the cache memory by taking advantage of unit-stride accesses (which directly improve both spatial and temporal locality).
+
+Column accesses is optimal in Fortran since arrays are stored as column-major; on the other hand, when using C/C++ it is more intuitive to think of arrays as row-major, which implies iterating first over the rows of the matrix in order to maximize cache efficiency. The implementation remains similar: rows are accessed from the bottom up, in each row the elements are accessed from left to right, and at any given moment only one element is ready to be computed.
+
+One other way of implementing this algorithm is iterating over the super-diagonals of the matrix. Starting with the main diagonal and going up, all the elements in the same diagonal can be computed in parallel, although it worsens locality.
+
+As for the blocked implementations, the sub-matrices in the main diagonal are also upper triangular, so the point method is applied. The remaining blocks are computed by solving the Sylvester equation.

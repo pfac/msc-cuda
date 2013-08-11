@@ -1,0 +1,50 @@
+\documentclass[a4paper,12pt,abstract=on,twoside,openright]{scrbook}
+
+\usepackage{thesis}
+
+\addbibresource{../shared/bib/all.bib}
+
+\setlength\columnsep{.5cm}
+\setlength\parindent{1.5em}
+
+% set footnote font size to 8pt (scriptsize for class 12pt)
+\let\oldfootnotesize\footnotesize
+\renewcommand*{\footnotesize}{\oldfootnotesize\scriptsize}
+
+% set line spacing to 1.5
+\usepackage{setspace}
+\onehalfspacing
+
+\begin{document}
+	\includepdf[pages=-]{assets/cover.pdf}
+
+	\frontmatter
+	\setcounter{page}{3}
+	\subfile{tex/001.acknowledgements.tex}
+	\subfile{tex/010.abstract.tex}
+	\subfile{tex/011.resumo.tex}
+
+	\tableofcontents
+	\addtocontents{toc}{~\hfill\textbf{Page}\par}
+	\subfile{tex/012.acronyms.tex}
+	\listoffigures
+	\addtocontents{lof}{~\hfill\textbf{Page}\par}
+	\listoftables
+	\addtocontents{lot}{~\hfill\textbf{Page}\par}
+	\lstlistoflistings
+	\addtocontents{lol}{~\hfill\textbf{Page}\par}
+	
+	\cleardoublepage
+	\pagenumbering{arabic}
+	\subfile{tex/100.intro.tex}
+	\subfile{tex/200.case_study.tex}
+	\subfile{tex/300.multicore.tex}
+	\subfile{tex/400.mic.tex}
+	\subfile{tex/500.cuda.tex}
+	\subfile{tex/900.conclusions.tex}
+	\subfile{tex/909.future_work.tex}
+	
+	\printbibliography
+	\appendix
+
+\end{document}
