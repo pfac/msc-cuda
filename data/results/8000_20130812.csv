@@ -1,0 +1,12 @@
+[36mProfiling with matrix (32 x 32)[0m
+[1m[37m  kbest "./build/release/bin/cuda --ignore-output --time -b 32 data/matrices/in_8000.txt"[0m[0m
+[36mProfiling with matrix (64 x 64)[0m
+[1m[37m  kbest "./build/release/bin/cuda --ignore-output --time -b 64 data/matrices/in_8000.txt"[0m[0m
+[36mProfiling with matrix (128 x 128)[0m
+[1m[37m  kbest "./build/release/bin/cuda --ignore-output --time -b 128 data/matrices/in_8000.txt"[0m[0m
+[36mProfiling with matrix (256 x 256)[0m
+[1m[37m  kbest "./build/release/bin/cuda --ignore-output --time -b 256 data/matrices/in_8000.txt"[0m[0m
+32,3.23004e+10
+64,3.18332e+10
+128,3.28683e+10
+256,3.55168e+10
