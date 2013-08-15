@@ -11,6 +11,7 @@
 
 // names
 using std::cerr;
+using std::ios;
 using std::ios_base;
 using std::istream;
 using std::ifstream;
@@ -179,9 +180,13 @@ public:
 
 	friend
 	ostream& operator<< (ostream& out, const matrix<T>& m) {
-		ios_base::fmtflags state = out.flags();
+		ios_base::fmtflags flags = out.flags();
 
+		out << "ARMA_MAT_TXT_FN008" << endl;
 		out << m.r << ' ' << m.c << endl;
+
+		out.setf(ios::scientific);
+
 		for (ulong i = 0; i < m.r; ++i) {
 			for (ulong j = 0; j < m.c; ++j) {
 				out.put(' ');
@@ -190,7 +195,7 @@ public:
 			out.put(endl);
 		}
 
-		out.flags(state);
+		out.flags(flags);
 		return out;
 	}
 };
