@@ -1,0 +1,9 @@
+======== NVPROF is profiling cuda...
+======== Command: cuda --ignore-output -b 32 data/matrices/in_8000.txt
+======== Profiling result:
+ Time(%)      Time   Calls       Avg       Min       Max  Name
+   99.09    32.30s     248  130.25ms    6.98ms  237.22ms  void __sqrtm_d<double>(unsigned long, double*, unsigned long, unsigned long, unsigned long)
+    0.47  154.69ms       1  154.69ms  154.69ms  154.69ms  [CUDA memcpy HtoD]
+    0.42  136.76ms       1  136.76ms  136.76ms  136.76ms  [CUDA memcpy DtoH]
+    0.01    4.89ms       1    4.89ms    4.89ms    4.89ms  void __sqrtm_d1<double>(double*, unsigned long, unsigned long, unsigned long)
+    0.00    1.62ms       1    1.62ms    1.62ms    1.62ms  void __sqrtm_d0<double>(double*, unsigned long, unsigned long, unsigned long)

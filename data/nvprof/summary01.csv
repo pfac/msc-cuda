@@ -1,0 +1,10 @@
+======== NVPROF is profiling cuda...
+======== Command: cuda --ignore-output -b 32 data/matrices/in_8000.txt
+======== Profiling result:
+Time(%),Time,Calls,Avg,Min,Max,Name
+,s,,ms,ms,ms,
+99.07,32.32824,248,130.3558,7.01479,237.1981,"void __sqrtm_d<double>(unsigned long, double*, unsigned long, unsigned long, unsigned long)"
+0.50,0.16185,1,161.8537,161.8537,161.8537,"[CUDA memcpy HtoD]"
+0.42,0.13673,1,136.7290,136.7290,136.7290,"[CUDA memcpy DtoH]"
+0.01,4.86e-03,1,4.86410,4.86410,4.86410,"void __sqrtm_d1<double>(double*, unsigned long, unsigned long, unsigned long)"
+0.00,1.62e-03,1,1.61950,1.61950,1.61950,"void __sqrtm_d0<double>(double*, unsigned long, unsigned long, unsigned long)"
