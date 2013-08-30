@@ -103,6 +103,10 @@ struct device : public cudaDeviceProp {
 			<< "CUDA cores:      " << dev.cores_total() << '(' << dev.cores_per_sm() << " cores per SM)" << endl
 			<< "Constant memory: " << device::str_memory(dev.totalConstMem) << endl
 			<< "Shared memory:   " << device::str_memory(dev.sharedMemPerBlock) <<  " per block" << endl
+			<< "Max Grid dimensions:" << endl
+			<< "  x: " << dev.maxGridSize[0] << endl
+			<< "  y: " << dev.maxGridSize[1] << endl
+			<< "  z: " << dev.maxGridSize[2] << endl
 			;
 	}
 };

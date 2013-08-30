@@ -2,8 +2,8 @@
 log-filename = logs/prof.log
 log-level    = INFO
 [SizesProfiler]
-exec = prof-threads
-sizes = 128,2048
+exec = kbest
+sizes = 2000,4000,8000
 [ThreadsProfiler]
 exec = kbest
 threads    = 1,2,4,8,16,32
